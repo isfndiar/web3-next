@@ -18,7 +18,7 @@ const Products = async () => {
       <div>Products Page</div>
       <div className="flex gap-3 flex-wrap">
         {products.length > 0 ? (
-          products.map((item) => (
+          products.map((item: any) => (
             <Link
               href={`/products/detail/${item.id}`}
               key={item.id}

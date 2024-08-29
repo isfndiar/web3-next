@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-async function getData(id) {
+async function getData(id: string) {
   const res = await fetch(`https://fakestoreapi.com/products/${id}`);
   const product = await res.json();
 

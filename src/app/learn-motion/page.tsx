@@ -44,6 +44,7 @@ export default function Home() {
     if (isInView) {
       animate(scope.current, { opacity: 0 });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isInView]);
 
   return (

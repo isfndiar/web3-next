@@ -29,8 +29,7 @@ const Navbar = () => {
       };
       fetchBalance();
     }
-    console.log(address);
-  }, []);
+  }, [address]);
 
   return (
     <div className="w-full py-5 px-10 flex items-center bg-black text-white">
