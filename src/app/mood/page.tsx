@@ -1,13 +1,19 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useWriteContract, useReadContract, useAccount } from "wagmi";
+import { useWriteContract, useAccount, useReadContract } from "wagmi";
 import { readContract } from "@wagmi/core";
 import { config } from "@/lib/config/wagmi";
 import { toast } from "sonner";
+import { publicClient } from "@/lib/config/viem";
 
-const moodAbiContract = [
+const abi = [
   {
     inputs: [
+      {
+        internalType: "address",
+        name: "_addr",
+        type: "address",
+      },
       {
         internalType: "string",
         name: "_mood",
@@ -20,7 +26,13 @@ const moodAbiContract = [
     type: "function",
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "address",
+        name: "_addr",
+        type: "address",
+      },
+    ],
     name: "getMood",
     outputs: [
       {
@@ -34,7 +46,7 @@ const moodAbiContract = [
   },
 ];
 
-const moodAddressContract = "0xc96d76650bf1e49d7f282e392561b78e1598c413";
+const moodAddressContract = "0x600E5E3aA2B580b090395b8b8a2423A3e080BC97";
 
 const MoodPage = () => {
   const [addr, setAddr] = useState<string>("");
@@ -45,21 +57,27 @@ const MoodPage = () => {
   const { writeContract, isPending } = useWriteContract();
 
   const getMood = async () => {
-    const result = await readContract(config, {
-      abi: moodAbiContract,
-      address: moodAddressContract,
-      functionName: "getMood",
-    });
-    console.log(result);
-    toast.success(`${result}`, { position: "top-center" });
+    try {
+      const result = await readContract(config, {
+        abi,
+        address: moodAddressContract,
+        functionName: "getMood",
+        args: [address],
+      });
+      console.log("Mood retrieved:", result);
+      toast.success(`${result}`, { position: "top-center" });
+    } catch (error) {
+      console.error("Error retrieving mood:", error);
+      toast.error("Failed to retrieve mood", { position: "top-center" });
+    }
   };
 
-  const setMood = () => {
+  const setMood = async () => {
     writeContract({
-      abi: moodAbiContract,
+      abi: abi,
       address: moodAddressContract,
       functionName: "setMood",
-      args: [value],
+      args: [address, value],
     });
   };
 
@@ -92,40 +110,50 @@ const MoodPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPending]);
 
-  if (!isConnected) {
-    return (
-      <div className="size-full flex flex-col justify-center items-center mt-10">
-        Sign In Your Wallet
-      </div>
-    );
-  }
-
+  // read contract
+  const result = useReadContract({
+    abi,
+    address: moodAddressContract,
+    functionName: "getMood",
+    args: [address],
+  });
   return (
-    <div className={`size-full flex flex-col justify-center items-center`}>
-      {hydration && address ? <h1>Wallet {address}</h1> : null}
-      <div className="mt-3">
-        <label htmlFor="set-mood">Set Your Mood</label>
-        <input
-          className="border border-black"
-          onChange={(e) => setValue(e.currentTarget.value)}
-          value={value}
-          type="text"
-          id="mood"
-        />
-      </div>
-      <div className={`space-x-4 mt-10`}>
-        <button
-          className={`bg-blue-200 rounded-full py-2 px-3`}
-          onClick={getMood}
-        >
-          GetMood
-        </button>
-        <button
-          className={`bg-blue-200 rounded-full py-2 px-3`}
-          onClick={setMood}
-        >
-          SetMood
-        </button>
+    <div
+      className={`size-full  flex flex-col justify-center items-center font-mono`}
+    >
+      <div className="border border-gray-200 shadow-2xl rounded-2xl p-3 w-1/3 mt-32">
+        <header className="text-center">
+          <div className="font-bold text-2xl">Type Your Mood! :D</div>
+          <div className="font-light text-sm">
+            it can be save in blockchain :D
+          </div>
+        </header>
+        <section className="mt-3 flex flex-col">
+          <label htmlFor="set-mood" className=" font-semibold">
+            Set Your Mood
+          </label>
+          <input
+            className="bg-slate-200 outline-none px-3 py-1 rounded-xl"
+            onChange={(e) => setValue(e.currentTarget.value)}
+            value={value}
+            type="text"
+            id="mood"
+          />
+        </section>
+        <section className={`space-x-4 mt-10`}>
+          <button
+            className={`bg-blue-200 rounded-full py-2 px-3`}
+            onClick={getMood}
+          >
+            GetMood
+          </button>
+          <button
+            className={`bg-blue-200 rounded-full py-2 px-3`}
+            onClick={setMood}
+          >
+            SetMood
+          </button>
+        </section>
       </div>
     </div>
   );
