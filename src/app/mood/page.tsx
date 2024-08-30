@@ -7,19 +7,6 @@ import { toast } from "sonner";
 
 const moodAbiContract = [
   {
-    inputs: [],
-    name: "getMood",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "string",
@@ -32,9 +19,22 @@ const moodAbiContract = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  {
+    inputs: [],
+    name: "getMood",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
 ];
 
-const moodAddressContract = "0xd26b59b152852A505FcC00373DF50327A4577F46";
+const moodAddressContract = "0xc96d76650bf1e49d7f282e392561b78e1598c413";
 
 const MoodPage = () => {
   const [addr, setAddr] = useState<string>("");
@@ -70,6 +70,9 @@ const MoodPage = () => {
   }, [isConnected, address]);
 
   useEffect(() => {
+    setHydration(true);
+  }, []);
+  useEffect(() => {
     if (isPending) {
       const id = toast.loading("Transaction in progress...", {
         position: "top-center",
@@ -99,7 +102,7 @@ const MoodPage = () => {
 
   return (
     <div className={`size-full flex flex-col justify-center items-center`}>
-      <h1>Hello {addr}</h1>
+      {hydration && address ? <h1>Wallet {address}</h1> : null}
       <div className="mt-3">
         <label htmlFor="set-mood">Set Your Mood</label>
         <input
