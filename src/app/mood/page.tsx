@@ -7,19 +7,6 @@ import { toast } from "sonner";
 
 const moodAbiContract = [
   {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_mood",
-        type: "string",
-      },
-    ],
-    name: "setMood",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "getMood",
     outputs: [
@@ -32,9 +19,22 @@ const moodAbiContract = [
     stateMutability: "view",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_mood",
+        type: "string",
+      },
+    ],
+    name: "setMood",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
 
-const moodAddressContract = "0xc96d76650bf1e49d7f282e392561b78e1598c413";
+const moodAddressContract = "0xd26b59b152852A505FcC00373DF50327A4577F46";
 
 const MoodPage = () => {
   const [addr, setAddr] = useState<string>("");
